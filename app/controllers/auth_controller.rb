@@ -30,7 +30,7 @@ class AuthController < ApplicationController
     redirect_login("El correo electronico es obligatorio.") and return unless params[:otp][:email].present?
     
     # Obtiene el usuario por email
-    identity = get_watcher_by_email(params[:otp][:email].strip)
+    identity = get_admin_by_email(params[:otp][:email].strip)
     
     # Valida que el usuario exista
     redirect_login("Error en el inicio de sesión.") and return unless identity.present?
@@ -103,8 +103,8 @@ class AuthController < ApplicationController
     redirect_login unless session[:user_otp].present?
   end
 
-  def get_watcher_by_email(email)
-    StatusWatcher.find_by(email: email, is_active: true)
+  def get_admin_by_email(email)
+    Admin.find_by(email: email, is_active: true)
   end
 
   def set_otp_password(identity)

@@ -5,7 +5,7 @@ Warden::Strategies.add(:otp_auth) do
 
   def authenticate!
     # Obtiene el usuario por email
-    identity = get_watcher_by_email(session[:user_otp])
+    identity = get_admin_by_email(session[:user_otp])
 
     # Si no existe el usuario o no está activo devuelve error
     return fail! "Datos de acceso incorrectos" unless identity
@@ -31,8 +31,8 @@ Warden::Strategies.add(:otp_auth) do
 
   private
 
-  def get_watcher_by_email(email)
-    StatusWatcher.find_by(email: email, is_active: true)
+  def get_admin_by_email(email)
+    Admin.find_by(email: email, is_active: true)
   end
 
   def check_identity(identity, password)

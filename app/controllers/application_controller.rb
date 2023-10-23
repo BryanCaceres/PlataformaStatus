@@ -64,7 +64,7 @@ class ApplicationController < ActionController::Base
   def current_user
     data_token = decoded_session_token
     return false if data_token.nil?
-    get_watcher(data_token["sub"])
+    get_admin(data_token["sub"])
   end
 
   def close_user_session
