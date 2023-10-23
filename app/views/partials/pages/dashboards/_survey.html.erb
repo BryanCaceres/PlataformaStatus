@@ -1,0 +1,35 @@
+<% 
+    country_nicename = client.country.nicename 
+    country_iso = client.country.iso
+%>
+
+<tr id = "<%= survey.id %>">
+    <td class="text-center pe-0">
+        <span class="text-gray-600 fw-bold fs-6"><%= client.client_name %></span>
+    </td>
+    <td class="text-center pe-0">
+        <span class="text-gray-600 fw-bold fs-6"><%= survey.product.name %></span>
+    </td>
+        <td class="text-center pe-0">
+        <span class="text-gray-600 fw-bold fs-6">
+            <img class="w-20px h-20px rounded-1" src="<%= "/assets/flags/#{country_iso}.svg" %>" alt="<%= country_nicename %>" title="<%= country_nicename %>" />
+        </span>
+    </td>
+    <td class="text-center pe-0">
+        <span class="text-gray-600 fw-bold fs-6"><%= survey.minimum_sample || "N/A" %></span>
+    </td>
+    <td class="text-center pe-0">
+        <span class="text-gray-600 fw-bold fs-6"><%= survey.number_of_responses || "N/A" %></span>
+    </td>
+    <td class="text-center pe-0 text-break">
+        <span class="text-gray-600 fw-bold fs-6"><%= survey.remaining_answers %></span>
+    </td>
+    <td class="text-center pe-8">
+        <span class="ms-1" data-bs-toggle="tooltip" title="Horarios Actualización: <%= survey&.update_hours&.join(" / ") || "Por Determinar" %>">
+            <span class="badge py-3 px-4 fs-7 badge-light-primary">
+                <%= survey.last_status_update ? survey.last_status_update.strftime('%d-%b-%Y') : "N/A" %>
+                <span> <%= getIcon('information-4', 'fs-3 ms-1') %></span>
+            </span>
+        </span>
+    </td>
+</tr>

@@ -1,0 +1,82 @@
+<% content_for :title do %>
+  Bienvenido
+<% end %>
+
+<% content_for :layout do %>
+  <% show_checkbox_recaptcha = flash[:show_checkbox_recaptcha] %>
+  <!--begin::Form-->
+  <form class="form w-100" novalidate="novalidate" id="kt_sign_in_form" action="<%= login_create_path %>" method="POST">
+    <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
+    
+    <!--begin::Heading-->
+    <div class="text-center mb-11">
+      <!--begin::Title-->
+      <h1 class="text-dark fw-bolder mb-3">
+        Bienvenido
+      </h1>
+      <!--end::Title-->
+
+      <!--begin::Subtitle-->
+      <div class="text-gray-500 fw-semibold fs-6">
+        Ingresa tu correo electronico y te llegará un email con tu contraseña
+      </div>
+      <!--end::Subtitle--->
+    </div>
+    <!--begin::Heading-->
+
+    <% if flash[:error].present? %>
+      <!--begin::Alert-->
+      <div class="alert alert-danger d-flex align-items-center p-2 mb-10">
+        <!--begin::Icon-->
+        <i class="ki-duotone ki-shield-tick fs-2hx text-danger me-4"><span class="path1"></span><span class="path2"></span></i>                    
+        <!--end::Icon-->
+
+        <!--begin::Wrapper-->
+        <div class="d-flex flex-column">
+          <!--begin::Content-->
+          <span><%= flash[:error] %></span>
+          <!--end::Content-->
+        </div>
+        <!--end::Wrapper-->
+
+        <!--begin::Close-->
+        <button type="button" class="position-absolute position-sm-relative m-2 m-sm-0 top-0 end-0 btn btn-icon ms-sm-auto" data-bs-dismiss="alert">
+          <i class="ki-duotone ki-cross fs-1 text-light"><span class="path1"></span><span class="path2"></span></i>
+        </button>
+        <!--end::Close-->
+      </div>
+      <!--end::Alert-->
+
+      <% flash.clear %>
+    <% end %>
+
+    <!--begin::Input group--->
+    <div class="fv-row mb-10">
+      <!--begin::Email-->
+      <input type="text" placeholder="Email" name="otp[email]" autocomplete="off" class="form-control bg-transparent"/>
+      <!--end::Email-->
+    </div>
+
+    <!--begin::Submit button-->
+    <div class="d-grid">
+      <button type="submit" id="kt_sign_in_submit" class="btn btn-purple-custom btn-purple-custom-color" <%= show_checkbox_recaptcha ? "disabled='disabled'".html_safe : '' %> >
+        <%= render 'partials/general/button-indicator', label: 'Ingresar' %>
+      </button>
+      
+      <% if FeatureFlagService.is_active?('login_recaptcha') %>
+        <div class="text-center">
+          <% if show_checkbox_recaptcha %>
+              <%= recaptcha_tags id: 'login-recaptcha', size: '500px', callback: 'onSuccessRecaptchaVerification', error_callback: 'onErrorRecaptchaVerification', expired_callback: 'onExpireRecaptchaVerification', class: 'mt-10 row text-center justify-content-center align-items-center' %>
+          <% else %>
+              <%= recaptcha_v3 action: 'login_recaptcha', site_key: ENV['RECAPTCHA_SITE_KEY_V3'], id: 'login-recaptcha' %>
+          <% end %>
+      </div>
+      <% end %>
+    </div>
+    <!--end::Submit button-->
+  </div>
+  <!--end::Form-->
+
+<% end %>
+
+<%= render template: "#{Rails.configuration.settings.KT_THEME_LAYOUT_DIR}/auth" %>

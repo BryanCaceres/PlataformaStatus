@@ -1,0 +1,39 @@
+# Utiliza una imagen de Ruby on Rails como base
+FROM ruby:3.2.0
+
+# Instala dependencias del sistema
+RUN apt-get update && apt-get install -y build-essential postgresql-client patch ruby-dev zlib1g-dev liblzma-dev --no-install-recommends
+
+# Instala Yarn usando npm (Node.js ya se instala en el paso anterior)
+RUN curl -sL https://deb.nodesource.com/setup_16.x | bash
+RUN apt-get install -y nodejs
+RUN npm install -g yarn
+
+# Configura el directorio de trabajo
+WORKDIR /app
+
+# Instala las gemas de Rails
+COPY Gemfile Gemfile.lock /app/
+RUN bundle check || bundle install
+
+# Copia el resto de los archivos del proyecto
+COPY . /app
+
+# Cambia al directorio de herramientas
+WORKDIR /app/_keenthemes/tools
+
+# Instala las dependencias de node
+RUN yarn install
+
+# Cambia al directorio principal del proyecto
+WORKDIR /app
+
+RUN SECRET_KEY_BASE=989b4d33a361e3eeded04d3ab5ce071a5692cd7c302389d26873800ea14b8c9fa9c19911640ef4b7b03e75f31bb4b7a3b0fc353ea98a93a1291ac767266e136d RDS_DB_NAME=rankings_production RDS_HOSTNAME=firstjob-production.cqn6xhzlaqrt.sa-east-1.rds.amazonaws.com RDS_PASSWORD=213688firstjob.- RDS_PORT=5432 RDS_USERNAME=postgres AVAILABLE_LOCALE=es,en,pt DEFAULT_LOCALE=es RAILS_ENV=production bundle exec rails db:migrate
+
+RUN DEFAULT_LOCALE=es AVAILABLE_LOCALE=es,en,pt bundle exec rails assets:precompile
+
+# Expone el puerto 3000
+EXPOSE 3004
+
+# Comando por defecto para iniciar el servidor Rails
+CMD ["rails", "server", "-b", "0.0.0.0"]

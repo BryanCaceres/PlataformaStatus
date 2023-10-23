@@ -1,0 +1,81 @@
+image:
+  name: atlassian/pipelines-awscli:latest
+
+definitions:
+  services:
+    docker:
+      memory: 3072
+  steps:
+    step: &push-image-qa
+      name: Build and publish rails status firstjob image to ECR.
+      image: atlassian/pipelines-awscli:latest
+      caches:
+        - docker
+      services:
+        - docker # Enable Docker for your repository
+      script:
+        - eval $(aws ecr get-login --region ${AWS_DEFAULT_REGION} --no-include-email)
+        - docker build -t ${AWS_REGISTRY_URL}/status-qa:v1.0.3 -f Dockerfile.qa .
+        - export IMAGE_NAME=${AWS_REGISTRY_URL}/status-qa:v1.0.3
+        - echo $IMAGE_NAME
+        - docker push ${IMAGE_NAME}
+        - docker tag ${IMAGE_NAME} ${AWS_REGISTRY_URL}/status-qa:latest
+        - export IMAGE_NAME_LATEST=${AWS_REGISTRY_URL}/status-qa:latest
+        - echo $IMAGE_NAME_LATEST
+        - docker push ${IMAGE_NAME_LATEST}
+        - docker build -t ${AWS_REGISTRY_URL}/sidekiq-status-qa:v1.0.3 -f Dockerfile.sidekiq .
+        - export IMAGE_NAME_SIDEKIQ=${AWS_REGISTRY_URL}/sidekiq-status-qa:v1.0.3
+        - echo $IMAGE_NAME_SIDEKIQ
+        - docker push ${IMAGE_NAME_SIDEKIQ}
+        - docker tag ${IMAGE_NAME_SIDEKIQ} ${AWS_REGISTRY_URL}/sidekiq-status-qa:latest
+        - export IMAGE_NAME_SIDEKIQ_LATEST=${AWS_REGISTRY_URL}/sidekiq-status-qa:latest
+        - echo $IMAGE_NAME_SIDEKIQ_LATEST
+        - docker push ${IMAGE_NAME_SIDEKIQ_LATEST}
+
+    step: &deploy-to-ecs-qa
+      name: Deploy to ECS
+      image: atlassian/pipelines-awscli:latest
+      script:
+        - export CLUSTER_NAME='crm-prod'
+        - export SERVICE_NAME='status'
+        # Update the task definition.
+        - pipe: atlassian/aws-ecs-deploy:1.6.2
+          variables:
+            CLUSTER_NAME: ${CLUSTER_NAME}
+            SERVICE_NAME: ${SERVICE_NAME}
+            FORCE_NEW_DEPLOYMENT: 'true'
+
+    step: &push-image-prod
+      name: Build and publish rails status firstjob image to ECR.
+      image: atlassian/pipelines-awscli
+      caches:
+        - docker
+      services:
+        - docker # Enable Docker for your repository
+      script:
+        - eval $(aws ecr get-login --region ${AWS_DEFAULT_REGION} --no-include-email)
+        - docker build -t ${AWS_REGISTRY_URL}/status-prod:v1.0.3 -f Dockerfile.production .
+        - export IMAGE_NAME=${AWS_REGISTRY_URL}/status-prod:v1.0.3
+        - echo $IMAGE_NAME
+        - docker push ${IMAGE_NAME}
+        - docker tag ${IMAGE_NAME} ${AWS_REGISTRY_URL}/status-prod:latest
+        - export IMAGE_NAME_LATEST=${AWS_REGISTRY_URL}/status-prod:latest
+        - echo $IMAGE_NAME_LATEST
+        - docker push ${IMAGE_NAME_LATEST}
+        - docker build -t ${AWS_REGISTRY_URL}/sidekiq-status-prod:v1.0.3 -f Dockerfile.sidekiq .
+        - export IMAGE_NAME_SIDEKIQ=${AWS_REGISTRY_URL}/sidekiq-status-prod:v1.0.3
+        - echo $IMAGE_NAME_SIDEKIQ
+        - docker push ${IMAGE_NAME_SIDEKIQ}
+        - docker tag ${IMAGE_NAME_SIDEKIQ} ${AWS_REGISTRY_URL}/sidekiq-status-prod:latest
+        - export IMAGE_NAME_SIDEKIQ_LATEST=${AWS_REGISTRY_URL}/sidekiq-status-prod:latest
+        - echo $IMAGE_NAME_SIDEKIQ_LATEST
+        - docker push ${IMAGE_NAME_SIDEKIQ_LATEST}
+
+pipelines:
+  custom:
+    production:
+      - step: *push-image-prod
+  branches:
+    qa:
+      - step: *push-image-qa
+      - step: *deploy-to-ecs-qa

@@ -1,0 +1,26 @@
+<% if @deal_ops_survey_ids.present? %>
+    <p style="text-align: center">Número de encuestas actualizadas correctamente: <%= @deal_ops_survey_ids.size %>.</p>
+<% end %>
+
+<% if @errors.present? %>
+    <p style="text-align: center">La tabla adjunta muestra los errores que se obtuvieron durante el proceso</p>
+    <table class="tg" style="width:100%; margin-bottom:50px; margin-top:40px;">
+        <thead>
+            <tr>
+                <td class="tg-8pto"><p style="font-weight: 800; font-size: 16px;">Errores</p></td>
+            </tr>
+        </thead>
+        <tbody>
+            <% @errors.each do |error| %>
+                <td>
+                    <%= error %>
+                </td>
+            <% end %>
+        </tbody>
+    </table>
+<% end %>
+
+<p style="text-align: center; margin-bottom:0">                        
+Cordialmente,<br>
+Sistema de Estatus
+</p>

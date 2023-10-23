@@ -1,0 +1,25 @@
+:concurrency: 4
+:logfile: ./log/sidekiq.log
+:queues:
+  - mailers
+  - default
+  - export
+
+:process_limits:
+  mailers: 4
+  default: 2
+  export: 1
+
+:schedule:
+  UpdateCountryStatusJob:
+    cron: '0 2 * * *'
+    queue: default
+    enabled: false
+    description: 'Actualización diaria del estado aplicación paises activos y encuestas activas'
+  UpdateStatusJob:
+    cron: '0 0-23 * * *'
+    queue: default
+    enabled: false
+    description: 'Actualización del número de respuestas de las encuestas activas'
+
+#cron: '0 0 * * *' #cron: '1 06-20 ? * MON,TUE,WED,THU,FRI,SAT'   # cron: '1 06-20 ? * MON,TUE,WED,THU,FRI,SAT'   # A los 1 minutos de la hora, entre las 06:00 AM y las 08:59 PM, sólo el lunes, martes, miércoles, jueves, viernes, y sábado

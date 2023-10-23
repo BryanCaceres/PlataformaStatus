@@ -1,0 +1,26 @@
+# Utiliza una imagen de Ruby on Rails como base
+FROM ruby:3.2.0
+
+# Instala dependencias del sistema
+RUN apt-get update && apt-get install -y build-essential postgresql-client patch ruby-dev zlib1g-dev liblzma-dev --no-install-recommends
+
+# Instala Yarn usando npm (Node.js ya se instala en el paso anterior)
+RUN curl -sL https://deb.nodesource.com/setup_16.x | bash
+RUN apt-get install -y nodejs
+RUN npm install -g yarn
+
+RUN cp /usr/share/zoneinfo/America/Santiago /etc/localtime
+
+# Configura el directorio de trabajo
+WORKDIR /app
+
+# Instala las gemas de Rails
+COPY Gemfile Gemfile.lock /app/
+RUN bundle config set --local force_ruby_platform true
+RUN bundle check || bundle install
+
+# Copia el resto de los archivos del proyecto
+COPY . /app
+
+# Comando por defecto para iniciar el servidor Rails
+CMD ["bundle","exec","sidekiq"]

@@ -1,0 +1,23 @@
+.bg-purple-custom {
+  background-color: #1B044F !important;
+}
+
+.btn-purple-custom {
+  background-color: #7D42F4 !important;
+}
+
+.btn-purple-custom-color {
+  color: #FFFFFF !important;
+}
+
+.logo {
+  height: 115px;
+}
+
+.logo img {
+  height: 100%;
+}
+
+.purple-custom-color {
+  color: #7D42F4 !important;
+}
