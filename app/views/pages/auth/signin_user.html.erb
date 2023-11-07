@@ -1,0 +1,32 @@
+<% content_for :title do %>
+  Bienvenido
+<% end %>
+
+<% content_for :layout do %>
+  <% show_checkbox_recaptcha = flash[:show_checkbox_recaptcha] %>
+  <!--begin::Form-->
+  <form class="form w-100" novalidate="novalidate" id="kt_sign_in_user_form" action="<%= login_create_path %>" method="POST">
+   
+    <%= render 'partials/general/signin-identity' %>
+
+    <!--begin::Submit button-->
+    <div class="d-grid">
+      <button type="submit" id="kt_sign_in_user_submit" class="btn btn-purple-custom btn-purple-custom-color" <%= show_checkbox_recaptcha ? "disabled='disabled'".html_safe : '' %> >
+        <%= render 'partials/general/button-indicator', label: 'Ingresar' %>
+      </button>
+      
+      <div class="text-center">
+        <% if show_checkbox_recaptcha %>
+            <%= recaptcha_tags id: 'login-recaptcha', size: '500px', callback: 'onSuccessRecaptchaVerification', error_callback: 'onErrorRecaptchaVerification', expired_callback: 'onExpireRecaptchaVerification', class: 'mt-10 row text-center justify-content-center align-items-center' %>
+        <% else %>
+            <%= recaptcha_v3 action: 'login_recaptcha', site_key: ENV['RECAPTCHA_SITE_KEY_V3'], id: 'login-recaptcha' %>
+        <% end %>
+      </div>
+    </div>
+    <!--end::Submit button-->
+  </div>
+  <!--end::Form-->
+
+<% end %>
+
+<%= render template: "#{Rails.configuration.settings.KT_THEME_LAYOUT_DIR}/auth" %>

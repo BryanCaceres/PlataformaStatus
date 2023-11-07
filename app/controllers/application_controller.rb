@@ -1,5 +1,5 @@
 class ApplicationController < ActionController::Base
-  helper_method :current_user, :user_signed_in?
+  helper_method :current_user, :user_signed_in?, :current_admin, :admin_signed_in?, :get_current_identity_name, :get_current_identity_email, :get_current_logout_redirect
 
   # Main initialization
   def initialize
@@ -37,6 +37,15 @@ class ApplicationController < ActionController::Base
     request.env['warden']
   end
 
+  def failure
+    flash[:error] = "Error en el inicio de sesión."
+    redirect_login_identity
+  end
+
+  def redirect_login_identity
+    session[:type_admin].present? ? (redirect_to admin_otps_verify_path) : (redirect_to otps_verify_path)
+  end
+
   def health
     render json: {
       :error => false,
@@ -53,7 +62,7 @@ class ApplicationController < ActionController::Base
   end
 
   def user_signed_in?
-    if decoded_session_token.nil?
+    if decoded_session_token(user_session_token).nil?
       close_user_session 
       return false
     end
@@ -62,35 +71,83 @@ class ApplicationController < ActionController::Base
   end
 
   def current_user
-    data_token = decoded_session_token
+    data_token = decoded_session_token(user_session_token)
     return false if data_token.nil?
-    get_admin(data_token["sub"])
+    get_user(data_token["sub"])
   end
 
   def close_user_session
     warden.logout
-    delete_session_token
+    delete_session_token(:token_user)
+  end
+
+  def authenticate_admin!
+    unless admin_signed_in?
+      close_admin_session
+      flash[:error] = "Para acceder debe iniciar sesión."
+      redirect_to admin_login_path
+    end
+  end
+
+  def admin_signed_in?
+    if decoded_session_token(admin_session_token).nil?
+      close_admin_session 
+      return false
+    end
+
+    return true
+  end
+
+  def current_admin
+    data_token = decoded_session_token(admin_session_token)
+    return false if data_token.nil?
+    get_admin(data_token["sub"]) 
+  end
+
+  def close_admin_session
+    warden.logout
+    delete_session_token(:token_admin)
+  end
+
+  def get_current_identity_name
+    current_user ? current_user.name : current_admin.name
+  end
+  
+  def get_current_identity_email
+    current_user ? current_user.email : current_admin.email 
+  end
+
+  def get_current_logout_redirect
+    current_user ? logout_path : admin_logout_path
+  end  
+
+  def get_ip
+    request.headers["CF-Connecting-IP"].present? ? request.headers["CF-Connecting-IP"] : request.remote_ip
   end
 
   private
 
-  def session_token
+  def user_session_token
     session[:token_user]
   end
 
-  def decoded_session_token
-    Jwt.decode(session_token)
+  def admin_session_token
+    session[:token_admin]
+  end
+  
+  def decoded_session_token(token)
+    Jwt.decode(token)
   end
 
-  def get_admin(id)
-    @current_user ||= Admin.find_by(id: id)
+  def delete_session_token(token)
+    session.delete(token)
   end
 
   def get_user(id)
     @current_user ||= User.find_by(id: id)
   end
 
-  def delete_session_token
-    session.delete(:token_user)
+  def get_admin(id)
+    @current_admin ||= Admin.find_by(id: id)
   end
 end

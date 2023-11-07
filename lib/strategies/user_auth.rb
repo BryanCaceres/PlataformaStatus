@@ -1,11 +1,11 @@
-Warden::Strategies.add(:otp_auth) do
+Warden::Strategies.add(:user_auth) do
   def valid?
-    params['otp'].present?
+    params['otp'].present? && session[:type_user].present?
   end
 
   def authenticate!
     # Obtiene el usuario por email
-    identity = get_admin_by_email(session[:user_otp])
+    identity = get_user_by_email(session[:user_otp])
 
     # Si no existe el usuario o no está activo devuelve error
     return fail! "Datos de acceso incorrectos" unless identity
@@ -31,8 +31,8 @@ Warden::Strategies.add(:otp_auth) do
 
   private
 
-  def get_admin_by_email(email)
-    Admin.find_by(email: email, is_active: true)
+  def get_user_by_email(email)
+    User.find_by(email: email, is_active: true)
   end
 
   def check_identity(identity, password)
@@ -48,7 +48,7 @@ Warden::Strategies.add(:otp_auth) do
   end
 
   def generate_access_token(identity)
-    Jwt.encode({ sub: identity.id, ip_address: session_ip })
+    Jwt.encode({ sub: identity.id, ip_address: session_ip, type: session[:type_user]}) #clase del modelo del identity
   end
 
   def delete_session_ip

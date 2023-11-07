@@ -8,12 +8,21 @@ Rails.application.routes.draw do
 
   # Defines the root path route ("/")
   root "dashboards#index"
-  get "/ingresar", to: "auth#signin", as: :login
-  post "/ingresar", to: "auth#create", as: :login_create
+  
+  get "/ingresar", to: "login_user#signin", as: :login
+  post "/ingresar", to: "login_user#create", as: :login_create
 
-  get "/otp", to: "auth#verify", as: :otps_verify
-  post "/confirm", to: "auth#confirm", as: :login_confirm
+  get "/otp", to: "login_user#verify", as: :otps_verify
+  post "/confirm", to: "login_user#confirm", as: :login_confirm
 
-  get '/salir' => 'auth#logout', as: :logout
-  #delete '/salir' => 'auth#logout', as: :logout
+  get '/salir' => 'login_user#logout', as: :logout
+
+  get "/admin/ingresar", to: "login_admin#signin", as: :admin_login
+  post "/admin/ingresar", to: "login_admin#create", as: :admin_login_create
+
+  get "/admin/otp", to: "login_admin#verify", as: :admin_otps_verify
+  post "/admin/confirm", to: "login_admin#confirm", as: :admin_login_confirm
+
+  get '/admin/salir' => 'login_admin#logout', as: :admin_logout
+
 end

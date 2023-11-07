@@ -10,10 +10,10 @@
 			<!--end::Avatar-->
 			<!--begin::Username-->
 			<div class="d-flex flex-column">
-				<div class="fw-bold d-flex align-items-center fs-5"><%= current_user.name %>
+				<div class="fw-bold d-flex align-items-center fs-5"><%= get_current_identity_name  %>
 				<!--<span class="badge badge-light-success fw-bold fs-8 px-2 py-1 ms-2">Pro</span>-->
 				</div>
-				<a href="#" class="fw-semibold text-muted text-hover-primary fs-7"><%= current_user.email %></a>
+				<a href="#" class="fw-semibold text-muted text-hover-primary fs-7"><%= get_current_identity_email %></a>
 			</div>
 			<!--end::Username-->
 		</div>
@@ -26,7 +26,7 @@
 	
 	<!--begin::Menu item-->
 	<div class="menu-item px-5">
-		<%= link_to logout_path, method: :delete, class: "menu-link px-5" do %>
+		<%= link_to get_current_logout_redirect , method: :delete, class: "menu-link px-5" do %>
 		  Cerrar Sesión
 		<% end %>
 	</div>

@@ -1,0 +1,24 @@
+<% content_for :title do %>
+  Iniciar Sesión
+<% end %>
+
+<% content_for :layout do %>
+
+  <!--begin::Form-->
+  <form class="form w-100" novalidate="novalidate" id="kt_sign_in_admin_otp_form" action="<%= admin_login_confirm_path %>" method="POST">
+
+    <%= render 'partials/general/verify-identity' %>
+
+    <!--begin::Submit button-->
+    <div class="d-grid mb-10">
+      <button type="submit" id="kt_sign_in_admin_otp_submit" class="btn btn-purple-custom btn-purple-custom-color">
+        <%= render 'partials/general/button-indicator', label: 'Ingresar' %>
+      </button>
+    </div>
+    <!--end::Submit button-->
+  </div>
+  <!--end::Form-->
+
+<% end %>
+
+<%= render template: "#{Rails.configuration.settings.KT_THEME_LAYOUT_DIR}/auth" %>
