@@ -1,0 +1,67 @@
+<%# <div class="col-xl-4"> %>
+<div class="<%= col_container_classes %>">
+
+    <!--begin::Mixed Widget 1-->
+    <div class="card card-xl-stretch mb-xl-8">
+        <!--begin::Body-->
+            <div class="card-body p-0">
+                <!--begin::Header-->
+                    <div class="px-9 pt-7 card-rounded h-350px w-100 bg-primary <%= study_key_name %>-card">
+                        <div class="d-flex text-center flex-column text-white pt-4">
+                            <span class="lh-1 ls-n2 mb-1">
+                            <img src="<%= study&.logo || default_study_logos[study_key_name] %>" class="h-60px" alt="<%= study_key_name %>-logo" title="<%= study_key_name %>-logo">
+                            </span>
+                            
+                            <% without_bie_participation = study_general_ranking&.dig('without_participation') %>
+
+                            <% if without_bie_participation %>
+                                <span class="fs-2hx fw-bold text-withe-800 m-3 mt-15 lh-1">Sin Información</span>
+                            <% else %>
+                                <% if study_key_name == 'tom' && study_general_ranking&.dig('approve_postion') %>
+                                    <span class="fs-5hx fw-bold text-withe-800 m-3 lh-1"><%= study_general_ranking['approve_postion'] %>°</span>
+                                <% elsif ['efy', 'bie'].include?(study_key_name) %>
+                                    
+                                    <% if study_general_ranking&.dig('public_position') %>
+                                        <span class="fs-5hx fw-bold text-withe-800 m-3 lh-1"><%= study_general_ranking['public_position'] %>°</span>
+                                    <% elsif study_general_ranking&.dig('private_position') %>
+                                        <span class="fs-2hx fw-bold text-withe-800 m-3 mt-15 lh-1">Resultado Privado</span>
+                                    <% else %>
+                                        <span class="fs-2hx fw-bold text-withe-800 m-3 mt-15 lh-1">Sin Información</span>     
+                                    <% end %>
+
+                                <% else %>
+                                    <span class="fs-2hx fw-bold text-withe-800 m-3 mt-15 lh-1">Sin Información</span>  
+                                <% end %>
+                            <% end %>
+                            
+                            <span class="fw-bold fs-4 m-3"><%= study_general_ranking&.dig('sub_type')&.capitalize() || "Sin Información" %></span>
+                        </div>
+                    </div>
+                <!--end::Header-->
+
+                <!--begin::Items-->
+                    <div class="bg-body shadow-sm card-rounded mx-9 mb-9 px-6 py-9 position-relative z-index-1" style="margin-top: -100px">
+                        <!--begin::Item-->
+                            <%= render partial: 'partials/pages/dashboards/ranking_detail_item', locals: { container_classes: 'd-flex align-items-center mb-6', icon: 'people', icon_classes: 'fs-1', title: 'N° Participantes', value: study_general_ranking&.dig('participants') } %>
+                        <!--end::Item-->
+
+                        <!--begin::Item-->
+                            <%= render partial: 'partials/pages/dashboards/ranking_detail_item', locals: { container_classes: "d-flex align-items-center #{ study_key_name == 'tom' ? '' : 'mb-6'}", icon: 'calendar', icon_classes: 'fs-1', title: 'Año', value: study_general_ranking&.dig('year') } %>
+                        <!--end::Item-->
+
+                        <% if ['efy', 'bie'].include?(study_key_name) %>
+                            <!--begin::Item-->
+                                <%= render partial: 'partials/pages/dashboards/ranking_detail_item', locals: { container_classes: 'd-flex align-items-center mb-6', icon: 'medal-star', icon_classes: 'fs-1', title: 'Puntaje', value: study_general_ranking&.dig('points') } %>
+                            <!--end::Item-->
+
+                            <!--begin::Item-->
+                                <%= render partial: 'partials/pages/dashboards/ranking_detail_item', locals: { container_classes: 'd-flex align-items-center', icon: 'chart-simple-2', icon_classes: 'fs-1', title: 'Decil', value: study_general_ranking&.dig('decile') } %>
+                            <!--end::Item-->
+                        <% end %>
+                    </div>
+                <!--end::Items-->
+            </div>
+        <!--end::Body-->
+    </div>
+    <!--end::Mixed Widget 1-->
+</div>

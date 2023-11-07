@@ -121,6 +121,6 @@ class LoginAdminController < ApplicationController
   end
 
   def redirect_root
-    redirect_to root_path
+    redirect_to admin_root_path
   end
 end

@@ -6,16 +6,21 @@ Rails.application.routes.draw do
   match "/404", to: "system#not_found", via: :all
   match "/500", to: "system#error", via: :all
 
-  # Defines the root path route ("/")
-  root "dashboards#index"
+  #User
+  get "/", to: "dashboards_user#index", as: :user_root
+  post "/", to: "dashboards_user#index", as: :change_client_user
   
   get "/ingresar", to: "login_user#signin", as: :login
   post "/ingresar", to: "login_user#create", as: :login_create
-
+  
   get "/otp", to: "login_user#verify", as: :otps_verify
   post "/confirm", to: "login_user#confirm", as: :login_confirm
-
+  
   get '/salir' => 'login_user#logout', as: :logout
+  
+  #Admin
+  get "/admin", to: "dashboards_admin#index", as: :admin_root
+  post "/admin", to: "dashboards_admin#index", as: :change_client_admin
 
   get "/admin/ingresar", to: "login_admin#signin", as: :admin_login
   post "/admin/ingresar", to: "login_admin#create", as: :admin_login_create

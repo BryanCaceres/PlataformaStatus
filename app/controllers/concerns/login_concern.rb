@@ -6,7 +6,7 @@ module LoginConcern
   end
 
   def set_type_session(type)
-    session["type_#{type}".to_sym]
+    session["type_#{type}".to_sym] = true
   end
 
   def set_otp_cookie(identity, type)

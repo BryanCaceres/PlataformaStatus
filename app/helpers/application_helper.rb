@@ -254,5 +254,8 @@ module ApplicationHelper
     output.html_safe
   end
 
+  def get_current_client_dashboard_url
+    current_user ? change_client_user_path : change_client_admin_path
+  end  
 
 end

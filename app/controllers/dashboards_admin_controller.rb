@@ -1,5 +1,5 @@
-class DashboardsController < ApplicationController
-  before_action :authenticate_user!, except: [:initialize]
+class DashboardsAdminController < ApplicationController
+  before_action :authenticate_admin!, except: [:initialize]
   before_action :handle_index, only: [:index]
   
   def initialize
@@ -20,56 +20,19 @@ class DashboardsController < ApplicationController
   private
 
   def handle_index
-    client_id = params[:client_id]
-
-    @user_type = get_user_type
+    @client_options = get_client_options 
     
-    if @user_type == 'User' && client_id
-      user_accesses = handle_user_accesses(client_id)
-    end
-    
-    @client_options = @user_type == 'Admin' ?  get_client_options : get_client_options(user_accesses)
-    
-    client_id = @client_options&.first&.second unless client_id
+    client_id = params[:client_id] ? params[:client_id] : @client_options&.first&.second 
 
     @client = get_client_by_id(client_id)
     
-    get_study_infromation # Establece variables de instancia para la información base de los estudios
+    get_study_information # Establece variables de instancia para la información base de los estudios
     
     get_general_information # Establece las variables de instacia para la información de los rankings generales del cliente
   end
 
-  def get_user_type
-    user_type = current_user&.class&.model_name&.to_s
-
-    if !user_type
-      logout("Hubo un error al cargar su información. Intene nuevamente más tarde. Si el problema persiste pongase en contacto con soporte")
-    end
-
-    return user_type
-  end
-
-  def handle_user_accesses(client_id)
-    user_accesses = get_user_access_client_ids(current_user.id)
-    if user_accesses.empty?
-      logout("No se encontró su información asociada. Intene nuevamente más tarde. Si el problema persiste pongase en contacto con soporte")
-    end
-
-    if !user_accesses.include?(client_id)
-      logout("Unauthorized")
-    end
-
-    return user_accesses
-  end
-
-  def get_user_access_client_ids(id)
-    UserAccess.where(user_id: id).pluck(:client_id)
-  end
-
-  def get_client_options(ids = [])
+  def get_client_options
     clients = Client.select("clients.id, clients.name || ' | ' || countries.iso as label").joins(:country).left_joins(:client_general_results, :client_historical_results).where("client_general_results.is_active = true OR client_historical_results.is_active = true").order('label')
-
-    clients = clients.where(id: ids) unless ids.empty?
 
     clients.empty? ? [] : clients.order('label ASC').map { |option| [option.label, option.id] }
   end
@@ -78,7 +41,7 @@ class DashboardsController < ApplicationController
     Client.find_by(id: id)
   end
 
-  def get_study_infromation
+  def get_study_information
     @efy = get_active_study_by_key_name('efy')
     @bie = get_active_study_by_key_name('bie')
     @tom = get_active_study_by_key_name('tom')
@@ -96,13 +59,4 @@ class DashboardsController < ApplicationController
     Study.find_by(key_name: key_name, is_active: true)
   end
 
-  def logout(message)
-    close_user_session
-    redirect_login(message) 
-  end
-
-  def redirect_login(message = nil)
-    flash[:error] = message if message.present?
-    redirect_to login_path
-  end
 end

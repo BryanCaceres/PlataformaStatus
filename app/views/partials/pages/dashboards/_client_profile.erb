@@ -1,0 +1,54 @@
+<% 
+    country_nicename = @client&.country&.nicename 
+    country_iso = @client&.country&.iso
+%>
+
+<div class="card mb-5 mb-xxl-8">
+    <div class="card-body pt-9 pb-5">
+        <!--begin::Details-->
+        <div class="d-flex flex-wrap flex-sm-nowrap">
+            <!--begin: Pic-->
+                <div class="me-7 mb-4">
+                    <div class="symbol symbol-75px symbol-fixed position-relative">
+                        <img src="<%= @client&.logo || asset_path('avatars/confidential_logo.png') %>" alt="<%= @client&.name || 'company' %>-logo">
+                    </div>
+                </div>
+            <!--end::Pic-->
+
+            <!--begin::Info-->
+                <div class="flex-grow-1 mt-auto">
+                    <!--begin::Title-->
+                    <div class="d-flex justify-content-between align-items-start flex-wrap mb-2">
+                    <!--begin::User-->
+                    <div class="d-flex flex-column col-xl-9">
+                        <!--begin::Name-->
+                        <div class="d-flex align-items-center mb-2">
+                        <div class="text-gray-900 fs-1 fw-bold me-1"> <%= @client&.name || 'Sin Información' %>
+                            <% if country_iso %>
+                                <span>
+                                    <img class="w-20px h-20px rounded-1 mb-1" src="<%= "/assets/flags/#{country_iso}.svg" %>" alt="<%= country_nicename %>" title="<%= country_nicename %>" />
+                                </span>
+                            <% end %>
+                        </div>
+                        </div>
+                        <!--end::Name-->
+                    </div>
+                    <!--end::User-->
+
+                    <!--begin::Actions-->
+                        <div class="d-flex col-xl-3">
+                            <% if @client_options&.size > 1 %>
+                                <%= form_with url: get_current_client_dashboard_url, method: :post do |form| %>
+                                    <%= form.select :client_id, options_for_select(@client_options, params['client_id']), {}, { class: 'form-select', onChange: 'this.form.requestSubmit()' } %>
+                                <% end %>
+                            <% end %>
+                        </div>
+                    <!--end::Actions-->
+                    </div>
+                    <!--end::Title-->
+                </div>
+            <!--end::Info-->
+        </div>
+        <!--end::Details-->
+    </div>
+</div>

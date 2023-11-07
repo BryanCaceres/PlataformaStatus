@@ -1,0 +1,23 @@
+<div class="<%= container_classes %>">
+    <!--begin::Symbol-->
+        <div class="symbol symbol-45px w-40px me-5">
+            <span class="symbol-label bg-lighten"><%= getIcon(icon, icon_classes) %></span>
+        </div>
+    <!--end::Symbol-->
+
+    <!--begin::Description-->
+        <div class="d-flex align-items-center flex-wrap w-100">
+            <!--begin::Title-->
+                <div class="mb-1 pe-3 flex-grow-1">
+                    <span class="fs-5 text-gray-800 fw-bold"><%= title %></span>
+                </div>
+            <!--end::Title-->
+
+            <!--begin::Label-->
+                <div class="d-flex align-items-center">
+                    <div class="fw-bold fs-5 text-gray-800 pe-1"><%= value || 'N/A' %></div>
+                </div>
+            <!--end::Label-->
+        </div>
+    <!--end::Description-->
+</div>

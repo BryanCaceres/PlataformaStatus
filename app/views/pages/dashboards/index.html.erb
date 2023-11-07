@@ -3,17 +3,17 @@
 <% end %>
 
 <% content_for :layout do %>
-
-  <!--begin::Row-->
-  <div class="row g-5 g-xl-12 mb-5 mb-xl-12">
-    <!--begin::Col-->
-    <div class="col-xl-12">
-      <%= render 'partials/pages/dashboards/survey-status' %>
+    <!--begin::Row-->
+    <div class="row g-5 g-xl-8">
+      <%= render 'partials/pages/dashboards/client_profile' %>
     </div>
-    <!--end::Col-->
-  </div>
   <!--end::Row-->
 
+  <!--begin::Row-->
+    <div class="row g-5 g-xl-8">
+      <%= render 'partials/pages/dashboards/rankings' %>
+    </div>
+  <!--end::Row-->
 <% end %>
 
 <%# Choose the layout. See app/views/layout/metronic/demo1/_bootstrap/default.rb %>

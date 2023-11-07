@@ -1,0 +1,15 @@
+<%
+    default_study_logos = { 'efy' => 'https://efyassets.s3.amazonaws.com/logos_estudios/EFY_Blanco_2023.png', 'bie' => 'https://efyassets.s3.amazonaws.com/logos_estudios/BIE_Blanco_2023.png', 'tom' => 'https://efyassets.s3.amazonaws.com/logos_estudios/TOM_Blanco_2023.png' }
+%>
+
+<!--begin::Col-->
+<%= render partial: 'partials/pages/dashboards/ranking_card', locals: { study_key_name: 'efy', col_container_classes: 'col-xl-4', study: @efy, study_general_ranking: @efy_general, default_study_logos: default_study_logos } %>
+<!--end::Col-->
+
+<!--begin::Col-->
+<%= render partial: 'partials/pages/dashboards/ranking_card', locals: { study_key_name: 'bie', col_container_classes: 'col-xl-4', study: @bie, study_general_ranking: @bie_general, default_study_logos: default_study_logos } %>
+<!--end::Col-->
+
+<!--begin::Col-->
+<%= render partial: 'partials/pages/dashboards/ranking_card', locals: { study_key_name: 'tom', col_container_classes: 'col-xl-4', study: @tom, study_general_ranking: @tom_general, default_study_logos: default_study_logos } %>
+<!--end::Col-->
