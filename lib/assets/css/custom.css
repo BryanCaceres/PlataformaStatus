@@ -33,3 +33,16 @@
 .tom-card {
   background-color:	#000000 !important;
 }
+
+.btn-group label.btn:hover {
+  background-color: #7D42F4; /* Cambia a tu color preferido */
+  color: #fff; /* Cambia a tu color preferido para el texto */
+}
+
+.chart-container {
+  position: relative;
+}
+
+.chart-container canvas {
+  display: none; /* Oculta el canvas inicialmente */
+}

@@ -17,8 +17,8 @@
                             <% if without_bie_participation %>
                                 <span class="fs-2hx fw-bold text-withe-800 m-3 mt-15 lh-1">Sin Información</span>
                             <% else %>
-                                <% if study_key_name == 'tom' && study_general_ranking&.dig('approve_postion') %>
-                                    <span class="fs-5hx fw-bold text-withe-800 m-3 lh-1"><%= study_general_ranking['approve_postion'] %>°</span>
+                                <% if study_key_name == 'tom' && study_general_ranking&.dig('approve_position') %>
+                                    <span class="fs-5hx fw-bold text-withe-800 m-3 lh-1"><%= study_general_ranking['approve_position'] %>°</span>
                                 <% elsif ['efy', 'bie'].include?(study_key_name) %>
                                     
                                     <% if study_general_ranking&.dig('public_position') %>

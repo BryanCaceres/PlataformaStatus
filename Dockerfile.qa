@@ -30,10 +30,10 @@ WORKDIR /app
 
 RUN SECRET_KEY_BASE=989b4d33a361e3eeded04d3ab5ce071a5692cd7c302389d26873800ea14b8c9fa9c19911640ef4b7b03e75f31bb4b7a3b0fc353ea98a93a1291ac767266e136d RDS_DB_NAME=studies_fj_qa RDS_HOSTNAME=firstjob-internal.cqn6xhzlaqrt.sa-east-1.rds.amazonaws.com RDS_PASSWORD=213688firstjob.- RDS_PORT=5432 RDS_USERNAME=postgres AVAILABLE_LOCALE=es,en,pt DEFAULT_LOCALE=es RAILS_ENV=production bundle exec rails db:migrate
 
-RUN DEFAULT_LOCALE=es AVAILABLE_LOCALE=es,en,pt bundle exec rails assets:precompile
+RUN SECRET_KEY_BASE=989b4d33a361e3eeded04d3ab5ce071a5692cd7c302389d26873800ea14b8c9fa9c19911640ef4b7b03e75f31bb4b7a3b0fc353ea98a93a1291ac767266e136d DEFAULT_LOCALE=es AVAILABLE_LOCALE=es,en,pt RAILS_ENV=production rails assets:precompile
 
 # Expone el puerto 3000
-EXPOSE 3004
+EXPOSE 3005
 
 # Comando por defecto para iniciar el servidor Rails
 CMD ["rails", "server", "-b", "0.0.0.0"]

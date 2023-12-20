@@ -1,0 +1,143 @@
+<div class="card mb-5 mb-xxl-8">
+  <div class="col-xl-4">
+    <div class="card-title">
+      <div class="card-body pt-9 pb-5">
+          <h2 class="menu-title purple-custom-color">Resultados EFY</h2>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-xl-8">
+    <div class="card mb-xl-6 mx-xl-6">
+      <div class="btn-group" data-toggle="buttons">
+        <label class="btn btn-outline-primary">
+          <input type="radio" id="general" name="type" value="general"> General
+        </label>
+        <label class="btn btn-outline-primary">
+          <input type="radio" id="tech" name="type" value="tech"> Tech
+        </label>
+        <label class="btn btn-outline-primary">
+          <input type="radio" id="fem" name="type" value="fem"> Fem
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <div id="results-container" class="chart-container">
+    <canvas id="results"></canvas>
+  </div>
+</div>  
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  const efyGeneral = <%= raw @efy_historical_general.to_json %>;
+  const efyTech = <%= raw @efy_historical_tech.to_json %>;
+  const efyFem = <%= raw @efy_historical_fem.to_json %>;
+  
+  const radios = document.querySelectorAll('input[type="radio"]');
+  const ctx = document.getElementById('results');
+  let efyChart = null; // Variable para almacenar la instancia del gráfico
+
+  document.getElementById('general').checked = true
+
+  radios.forEach(radio => {
+    radio.addEventListener('change', function() {
+      const selectedType = document.querySelector('input[name="type"]:checked').value;
+      let currentData = [];
+
+      switch (selectedType) {
+        case 'general':
+          currentData = efyGeneral;
+          break;
+        case 'tech':
+          currentData = efyTech;
+          break;
+        case 'fem':
+          currentData = efyFem;
+          break;
+      }
+
+      const errorElement = document.querySelector('.alert-danger');
+      if (errorElement) {
+        errorElement.remove(); // Eliminar el mensaje de error si existe
+      }
+
+      updateChart(currentData);
+    });
+  });
+
+  function updateChart(data) {
+    const resultsContainer = document.getElementById('results-container');
+
+    if (!data || data.length === 0) {
+      const errorMessage = "No se encontraron datos.";
+      const errorElement = document.createElement('div');
+      errorElement.textContent = errorMessage;
+      errorElement.classList.add('alert', 'alert-danger', 'mt-3'); // Agregar clases de Bootstrap para el estilo
+      const existingErrorElement = document.querySelector('.alert-danger');
+      if (!existingErrorElement) {
+        resultsContainer.appendChild(errorElement); // Agrega el mensaje de error al contenedor de resultados si no existe
+      }
+      if (efyChart) {
+        efyChart.destroy(); // Destruye el gráfico si existe
+        efyChart = null; // Resetea la variable del gráfico
+      }
+      return; // Detener la ejecución de la función ya que no hay datos para mostrar
+    }
+
+    const sortedData = data.sort((a, b) => a.year - b.year);
+
+    const labels = sortedData.map(e => e.year);
+    const points = sortedData.map(e => e.points);
+    const datasetLabel = sortedData[0].type.charAt(0).toUpperCase() + sortedData[0].type.slice(1); // Convierte la primera letra en mayúscula
+
+    // Si hay solo un punto, colócalo en el centro del gráfico
+    if (labels.length === 1) {
+      labels.unshift(''); // Agrega una etiqueta vacía al principio
+      labels.push(''); // Agrega una etiqueta vacía al final
+      points.unshift(null); // Agrega un punto nulo al principio
+      points.push(null); // Agrega un punto nulo al final
+    }
+
+    if (efyChart) {
+      efyChart.destroy(); // Destruye el gráfico anterior si existe
+    }
+
+    efyChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: labels,
+        datasets: [{
+          label: datasetLabel,
+          data: points,
+          borderWidth: 1,
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                const index = context.dataIndex;
+                const currentYear = labels[index];
+                const currentSubType = sortedData.find(e => e.year === currentYear).sub_type.charAt(0).toUpperCase() + sortedData.find(e => e.year === currentYear).sub_type.slice(1); // Convierte la primera letra del subtipo en mayúscula
+                return currentSubType;
+              },
+              afterLabel: function(context) {
+                const index = context.dataIndex;
+                const currentValue = points[index];
+                return 'Puntos: ' + currentValue; // Muestra el valor del punto al lado del tooltip
+              }
+            }
+          }
+        }
+      }
+    });
+  }
+
+  // Llama a updateChart con los datos iniciales (efyGeneral) para mostrar el gráfico inicial.
+  updateChart(efyGeneral);
+</script>
