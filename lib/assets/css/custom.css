@@ -46,3 +46,11 @@
 .chart-container canvas {
   display: none; /* Oculta el canvas inicialmente */
 }
+
+.select2-container {
+  width: 250px !important;
+}
+
+.scrolltop {
+  background-color: #7D42F4;
+}

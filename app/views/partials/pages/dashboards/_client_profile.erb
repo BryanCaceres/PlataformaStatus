@@ -39,7 +39,7 @@
                         <div class="d-flex col-xl-3">
                             <% if @client_options&.size > 1 %>
                                 <%= form_with url: get_current_client_dashboard_url, method: :post do |form| %>
-                                    <%= form.select :client_id, options_for_select(@client_options, params['client_id']), {}, { class: 'form-select', onChange: 'this.form.requestSubmit()' } %>
+                                        <%= form.select :client_id, options_for_select(@client_options, params['client_id']), {}, { class: 'form-select form-select-solid', onChange: 'this.form.requestSubmit()', 'data-control': 'select2' } %>
                                 <% end %>
                             <% end %>
                         </div>
